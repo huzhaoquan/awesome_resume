@@ -1,0 +1,453 @@
+import { ResumeData, ResumeHeader as ResumeHeaderType, WorkExperience, Education, SkillCategory, Project, Certification } from '@/types/resume'
+
+// Anthropic风格简历模板
+// 设计理念：简洁、优雅、现代，使用Anthropic品牌紫色系
+
+interface AnthropicTemplateProps {
+  data: ResumeData
+}
+
+// 简历头部组件
+export function ResumeHeader({ header }: { header: ResumeHeaderType }) {
+  return (
+    <header className="mb-12 border-b border-anthropic-200 pb-8">
+      <h1 className="text-4xl font-bold text-anthropic-950 mb-2 tracking-tight font-heading">
+        {header.name}
+      </h1>
+      <h2 className="text-xl text-anthropic-orange font-medium mb-4 font-heading">
+        {header.title}
+      </h2>
+      <div className="flex flex-wrap gap-4 text-sm text-anthropic-600 font-body">
+        <span className="flex items-center gap-1">
+          <div className="w-2 h-2 bg-anthropic-orange rounded-full"></div>
+          {header.email}
+        </span>
+        <span className="flex items-center gap-1">
+          <div className="w-2 h-2 bg-anthropic-orange rounded-full"></div>
+          {header.phone}
+        </span>
+        <span className="flex items-center gap-1">
+          <div className="w-2 h-2 bg-anthropic-orange rounded-full"></div>
+          {header.location}
+        </span>
+        {header.website && (
+          <span className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-anthropic-orange rounded-full"></div>
+            {header.website}
+          </span>
+        )}
+      </div>
+    </header>
+  )
+}
+
+// 职业概述组件
+export function ResumeSummary({ summary }: { summary: string }) {
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-4 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-orange rounded-full mr-3"></span>
+        职业概述
+      </h3>
+      <p className="text-anthropic-800 leading-relaxed text-base font-body">
+        {summary}
+      </p>
+    </section>
+  )
+}
+
+// 工作经历组件
+export function ResumeExperience({ experience }: { experience: WorkExperience[] }) {
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-6 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-orange rounded-full mr-3"></span>
+        工作经历
+      </h3>
+      <div className="space-y-8">
+        {experience.map((exp) => (
+          <div key={exp.id} className="relative">
+            <div className="absolute left-0 top-2 w-4 h-4 bg-anthropic-100 rounded-full border-2 border-anthropic-orange"></div>
+            <div className="pl-8">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h4 className="text-lg font-medium text-anthropic-950 font-heading">
+                    {exp.position}
+                  </h4>
+                  <p className="text-anthropic-blue font-medium font-heading">
+                    {exp.company}
+                  </p>
+                </div>
+                <span className="text-sm text-anthropic-600 bg-anthropic-100 px-3 py-1 rounded-full font-body">
+                  {exp.startDate} - {exp.endDate}
+                </span>
+              </div>
+              <p className="text-sm text-anthropic-600 mb-3 font-body">{exp.location}</p>
+              <p className="text-anthropic-800 leading-relaxed mb-3 font-body">
+                {exp.description}
+              </p>
+              {exp.achievements && exp.achievements.length > 0 && (
+                <ul className="space-y-2">
+                  {exp.achievements.map((achievement, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="text-anthropic-orange mr-2 mt-1">▹</span>
+                      <span className="text-anthropic-700 text-sm font-body">{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {exp.techStack && exp.techStack.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {exp.techStack.map((tech) => (
+                    <span
+                      key={tech}
+                      className="text-xs px-3 py-1 bg-anthropic-50 text-anthropic-800 rounded-md font-medium border border-anthropic-200 font-body"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8 ml-8 h-px bg-anthropic-200"></div>
+    </section>
+  )
+}
+
+// 教育背景组件
+export function ResumeEducation({ education }: { education: Education[] }) {
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-6 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-green rounded-full mr-3"></span>
+        教育背景
+      </h3>
+      <div className="space-y-6">
+        {education.map((edu) => (
+          <div key={edu.id} className="flex justify-between">
+            <div>
+              <h4 className="text-lg font-medium text-anthropic-950 font-heading">
+                {edu.school}
+              </h4>
+              <p className="text-anthropic-green font-heading">
+                {edu.degree} - {edu.major}
+              </p>
+              {edu.gpa && (
+                <p className="text-sm text-anthropic-600 mt-1 font-body">GPA: {edu.gpa}</p>
+              )}
+              {edu.honors && edu.honors.length > 0 && (
+                <p className="text-sm text-anthropic-600 mt-1 font-body">
+                  荣誉：{edu.honors.join(', ')}
+                </p>
+              )}
+            </div>
+            <span className="text-sm text-anthropic-600 bg-anthropic-100 px-3 py-1 rounded-full h-fit font-body">
+              {edu.startDate} - {edu.endDate}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// 技能组件
+export function ResumeSkills({ skills }: { skills: SkillCategory[] }) {
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-6 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-blue rounded-full mr-3"></span>
+        技能专长
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {skills.map((category) => (
+          <div key={category.name} className="pb-6 border-b border-anthropic-200 last:border-b-0 last:pb-0">
+            <h4 className="text-base font-medium text-anthropic-blue mb-3 font-heading">
+              {category.name}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {category.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="text-sm px-3 py-1.5 bg-anthropic-50 text-anthropic-800 rounded-md border border-anthropic-300 hover:border-anthropic-blue transition-colors font-body"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// 项目展示组件
+export function ResumeProjects({ projects }: { projects?: Project[] }) {
+  if (!projects || projects.length === 0) return null
+
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-6 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-orange rounded-full mr-3"></span>
+        项目经验
+      </h3>
+      <div className="grid grid-cols-1 gap-6">
+        {projects.map((project) => (
+          <div key={project.id} className="relative pl-8">
+            <div className="absolute left-0 top-2 w-3 h-3 bg-anthropic-orange rounded-full"></div>
+            <div className="bg-anthropic-50 rounded-lg p-5 border border-anthropic-200">
+              <div className="flex justify-between items-start mb-3">
+                <h4 className="text-lg font-medium text-anthropic-950 font-heading">
+                  {project.name}
+                </h4>
+                {project.link && (
+                  <a
+                    href={project.link}
+                    className="text-sm text-anthropic-blue hover:text-anthropic-orange transition-colors font-body"
+                  >
+                    查看项目 →
+                  </a>
+                )}
+              </div>
+              <p className="text-anthropic-800 leading-relaxed mb-3 font-body">
+                {project.description}
+              </p>
+              {project.achievements && project.achievements.length > 0 && (
+                <ul className="space-y-1 mb-3">
+                  {project.achievements.map((achievement, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="text-anthropic-orange mr-2 mt-1 text-sm">▹</span>
+                      <span className="text-anthropic-700 text-sm font-body">{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {project.techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="text-xs px-2.5 py-1 bg-white text-anthropic-800 rounded-md border border-anthropic-300 font-medium font-body"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// 认证证书组件
+export function ResumeCertifications({ certifications }: { certifications?: Certification[] }) {
+  if (!certifications || certifications.length === 0) return null
+
+  return (
+    <section className="mb-10">
+      <h3 className="text-lg font-semibold text-anthropic-950 mb-6 flex items-center font-heading">
+        <span className="inline-block w-2 h-2 bg-anthropic-green rounded-full mr-3"></span>
+        认证证书
+      </h3>
+      <div className="space-y-4">
+        {certifications.map((cert) => (
+          <div key={cert.id} className="flex justify-between items-center bg-anthropic-100 rounded-lg p-4 border border-anthropic-200">
+            <div>
+              <h4 className="text-base font-medium text-anthropic-950 font-heading">
+                {cert.name}
+              </h4>
+              <p className="text-sm text-anthropic-green font-heading">
+                {cert.issuer}
+              </p>
+            </div>
+            <span className="text-sm text-anthropic-600 font-body">
+              {cert.date}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// 主模板组件
+export function AnthropicTemplate({ data }: AnthropicTemplateProps) {
+  return (
+    <div className="max-w-4xl mx-auto bg-anthropic-light p-12 shadow-lg relative font-body">
+      <div className="absolute top-0 left-0 w-1 h-24 bg-anthropic-orange"></div>
+      <div className="absolute top-0 right-0 w-1 h-24 bg-anthropic-blue"></div>
+
+      <ResumeHeader header={data.header} />
+      <ResumeSummary summary={data.summary} />
+      <ResumeExperience experience={data.experience} />
+      <ResumeEducation education={data.education} />
+      <ResumeSkills skills={data.skills} />
+      <ResumeProjects projects={data.projects} />
+      <ResumeCertifications certifications={data.certifications} />
+    </div>
+  )
+}
+
+// 默认识简历示例数据
+export const sampleAnthropicResume: ResumeData = {
+  header: {
+    name: '张三',
+    title: '高级全栈工程师',
+    email: 'zhangsan@example.com',
+    phone: '+86 138 0000 0000',
+    location: '北京市',
+    website: 'github.com/zhangsan'
+  },
+  summary: '拥有5年全栈开发经验的工程师，专注于构建可扩展的Web应用和分布式系统。在大型互联网公司和初创企业都有丰富的工作经验，擅长系统架构设计、性能优化和团队协作。',
+  experience: [
+    {
+      id: '1',
+      company: '字节跳动',
+      position: '高级全栈工程师',
+      location: '北京',
+      startDate: '2022.03',
+      endDate: 'Present',
+      description: '负责公司内部核心协作平台的架构设计和开发，支持万人级别的并发使用。',
+      achievements: [
+        '设计并实现了微前端架构，提升页面加载速度40%',
+        '优化数据库查询，提高系统响应速度35%',
+        '指导3名初级工程师，并建立了代码审查规范'
+      ],
+      techStack: [
+        'React',
+        'TypeScript',
+        'Node.js',
+        'PostgreSQL',
+        'Redis',
+        'Docker',
+        'Kubernetes'
+      ]
+    },
+    {
+      id: '2',
+      company: '滴滴出行',
+      position: '前端工程师',
+      location: '北京',
+      startDate: '2020.07',
+      endDate: '2022.02',
+      description: '参与滴滴出行司机端Web应用的开发和维护，负责核心模块的功能开发和性能优化。',
+      achievements: [
+        '重构用户界面组件，代码复用率提升60%',
+        '实现首屏加载优化，加载时间减少50%',
+        '参与技术分享，组织了5次前端技术分享会'
+      ],
+      techStack: ['React', 'Vue.js', 'Webpack', 'JavaScript', 'CSS3', 'Sass']
+    },
+    {
+      id: '3',
+      company: '美团',
+      position: '初级前端工程师',
+      location: '北京',
+      startDate: '2019.06',
+      endDate: '2020.06',
+      description: '负责美团外卖商家端Web应用的开发和维护，参与新功能的开发和Bug修复。',
+      achievements: [
+        '参与3个重要模块的开发，代码质量达标率100%',
+        '主动提出UI改进建议，提升用户体验'
+      ],
+      techStack: ['JavaScript', 'jQuery', 'HTML5', 'CSS3', 'Git']
+    }
+  ],
+  education: [
+    {
+      id: '1',
+      school: '北京理工大学',
+      degree: '工学学士',
+      major: '计算机科学与技术',
+      location: '北京',
+      startDate: '2015.09',
+      endDate: '2019.06',
+      gpa: '3.8/4.0',
+      honors: ['国家励志奖学金', '优秀学生干部']
+    }
+  ],
+  skills: [
+    {
+      name: '前端技术',
+      skills: [
+        'React',
+        'Vue.js',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Webpack',
+        'Vite',
+        'Next.js',
+        'Tailwind CSS'
+      ]
+    },
+    {
+      name: '后端技术',
+      skills: [
+        'Node.js',
+        'Python',
+        'Go',
+        'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'RESTful API',
+        'GraphQL',
+        'Docker',
+        'Kubernetes'
+      ]
+    },
+    {
+      name: '其他技能',
+      skills: [
+        'Git',
+        'CI/CD',
+        'AWS',
+        '微服务架构',
+        '系统优化',
+        '团队管理',
+        '敏捷开发',
+        '代码审查'
+      ]
+    }
+  ],
+  projects: [
+    {
+      id: '1',
+      name: '智能协作平台',
+      description: '一个企业级协作平台，支持实时协作、任务管理、文档共享等功能，采用微服务架构。',
+      techStack: ['React', 'Node.js', 'WebSocket', 'PostgreSQL', 'Docker'],
+      link: 'https://github.com/zhangsan/collaboration-platform',
+      achievements: ['获得公司年度技术创新奖', '服务超过10000+员工']
+    },
+    {
+      id: '2',
+      name: '个人博客系统',
+      description: '基于Next.js和Markdown的个人博客系统，支持SEO优化、代码高亮、评论等功能。',
+      techStack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
+      link: 'https://github.com/zhangsan/personal-blog',
+      achievements: ['Google PageSpeed评分95+', '累计访问量10万+']
+    }
+  ],
+  certifications: [
+    {
+      id: '1',
+      name: 'AWS Certified Solutions Architect',
+      issuer: 'Amazon Web Services',
+      date: '2023.05',
+      credentialId: 'AWS-2023-XXXXX'
+    },
+    {
+      id: '2',
+      name: 'Kubernetes Administrator',
+      issuer: 'Cloud Native Computing Foundation',
+      date: '2023.08',
+      credentialId: 'CKA-2023-XXXXX'
+    }
+  ]
+}

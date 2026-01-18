@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --anthropic-50: 248, 248, 255;
+  --anthropic-100: 224, 224, 254;
+  --anthropic-200: 199, 199, 254;
+  --anthropic-300: 164, 164, 253;
+  --anthropic-400: 130, 130, 250;
+  --anthropic-500: 107, 105, 250;
+  --anthropic-600: 94, 93, 255;
+  --anthropic-700: 75, 73, 218;
+  --anthropic-800: 62, 60, 184;
+  --anthropic-900: 53, 53, 149;
+  --anthropic-950: 29, 27, 85;
+}
+
+body {
+  @apply bg-white text-gray-900;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-anthropic-600 to-anthropic-700 bg-clip-text text-transparent;
+}
+
+.purple-button {
+  @apply bg-anthropic-600 hover:bg-anthropic-700 text-white font-medium rounded-lg px-6 py-3 transition-colors duration-200;
+}

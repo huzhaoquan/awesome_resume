@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="500" height="700">
+  <defs>
+    <!-- Purple gradient -->
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c4b5fd" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+
+    <!-- Light purple background -->
+    <rect id="card" x="0" y="0" width="500" height="700" fill="#ffffff" rx="12" ry="12"/>
+  </defs>
+
+  <!-- Main card -->
+  <use href="#card"/>
+
+  <!-- Purple side accents -->
+  <rect x="0" y="0" width="8" height="120" fill="url(#purpleGradient)"/>
+  <rect x="492" y="0" width="8" height="120" fill="url(#purpleGradient)"/>
+
+  <!-- Header section -->
+  <text x="40" y="70" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="700" fill="#111827">张三</text>
+  <text x="40" y="98" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="16" font-weight="500" fill="#8b5cf6">高级全栈工程师</text>
+
+  <!-- Contact info -->
+  <g font-size="12" fill="#6b7280">
+    <circle cx="42" cy="120" r="2" fill="#d8b4fe"/>
+    <text x="52" y="123">zhangsan@example.com</text>
+
+    <circle cx="208" cy="120" r="2" fill="#d8b4fe"/>
+    <text x="218" y="123">+86 138 0000 0000</text>
+
+    <circle cx="356" cy="120" r="2" fill="#d8b4fe"/>
+    <text x="366" y="123">北京市</text>
+  </g>
+
+  <!-- Separator line -->
+  <line x1="40" y1="145" x2="460" y2="145" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Section: Summary -->
+  <text x="40" y="175" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#111827">职业概述</text>
+  <circle cx="50" y="175" r="3" fill="#a78bfa"/>
+
+  <g font-size="12" fill="#4b5563">
+    <text x="40" y="198">拥有5年全栈开发经验，专注于构建可</text>
+    <text x="40" y="216">扩展的Web应用和分布式系统。</text>
+  </g>
+
+  <!-- Section: Experience -->
+  <text x="40" y="250" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#111827">工作经历</text>
+  <circle cx="50" y="250" r="3" fill="#a78bfa"/>
+
+  <!-- Job 1 -->
+  <rect x="40" y="270" width="4" height="70" fill="#e9d5ff" rx="2"/>
+  <circle cx="42" cy="275" r="4" fill="#d8b4fe" stroke="#c4b5fd" stroke-width="1.5"/>
+
+  <text x="60" y="278" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="500" fill="#111827">高级全栈工程师</text>
+  <text x="60" y="295" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="12" font-weight="500" fill="#8b5cf6">字节跳动</text>
+  <text x="380" y="278" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="11" fill="#9ca3af">2022.03 - Present</text>
+
+  <text x="60" y="320" font-size="11" fill="#6b7280">负责公司内部核心协作平台的架构设</text>
+  <text x="60" y="335" font-size="11" fill="#6b7280">计和开发，支持万人级别的并发使用。</text>
+
+  <!-- Tech stack pills -->
+  <rect x="62" y="348" width="38" height="18" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" rx="9"/>
+  <text x="81" y="360.5" font-size="9" font-weight="500" fill="#7c3aed" text-anchor="middle">React</text>
+
+  <rect x="108" y="348" width="54" height="18" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" rx="9"/>
+  <text x="135" y="360.5" font-size="9" font-weight="500" fill="#7c3aed" text-anchor="middle">TypeScript</text>
+
+  <rect x="170" y="348" width="48" height="18" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" rx="9"/>
+  <text x="194" y="360.5" font-size="9" font-weight="500" fill="#7c3aed" text-anchor="middle">Node.js</text>
+
+  <!-- Section: Education -->
+  <text x="40" y="395" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#111827">教育背景</text>
+  <circle cx="50" y="395" r="3" fill="#a78bfa"/>
+
+  <text x="60" y="418" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="500" fill="#111827">北京理工大学</text>
+  <text x="60" y="435" font-size="12" fill="#8b5cf6">工学学士 - 计算机科学与技术</text>
+  <text x="380" y="418" font-size="11" fill="#9ca3af">2015.09 - 2019.06</text>
+
+  <!-- Section: Skills -->
+  <text x="40" y="465" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#111827">技能专长</text>
+  <circle cx="50" y="465" r="3" fill="#a78bfa"/>
+
+  <text x="60" y="488" font-size="12" font-weight="500" fill="#8b5cf6">前端技术</text>
+
+  <!-- Frontend skills row 1 -->
+  <rect x="62" y="498" width="34" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="79" y="510.5" font-size="9" fill="#374151" text-anchor="middle">React</text>
+
+  <rect x="102" y="498" width="44" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="124" y="510.5" font-size="9" fill="#374151" text-anchor="middle">Vue.js</text>
+
+  <rect x="152" y="498" width="64" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="184" y="510.5" font-size="9" fill="#374151" text-anchor="middle">TypeScript</text>
+
+  <rect x="222" y="498" width="52" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="248" y="510.5" font-size="9" fill="#374151" text-anchor="middle">JavaScript</text>
+
+  <!-- Frontend skills row 2 -->
+  <rect x="62" y="522" width="38" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="81" y="534.5" font-size="9" fill="#374151" text-anchor="middle">HTML5</text>
+
+  <rect x="106" y="522" width="34" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="123" y="534.5" font-size="9" fill="#374151" text-anchor="middle">CSS3</text>
+
+  <rect x="146" y="522" width="48" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="170" y="534.5" font-size="9" fill="#374151" text-anchor="middle">Webpack</text>
+
+  <rect x="202" y="522" width="28" height="18" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" rx="9"/>
+  <text x="216" y="534.5" font-size="9" fill="#374151" text-anchor="middle">Vite</text>
+
+  <!-- Section: Projects -->
+  <text x="40" y="570" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="14" font-weight="600" fill="#111827">项目经验</text>
+  <circle cx="50" y="570" r="3" fill="#a78bfa"/>
+
+  <rect x="62" y="590" width="376" height="66" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" rx="8"/>
+
+  <text x="78" y="608" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="13" font-weight="500" fill="#111827">智能协作平台</text>
+  <text x="78" y="625" font-size="11" fill="#4b5563">一个企业级协作平台，采用微服务架构</text>
+
+  <rect x="78" y="634" width="66" height="18" fill="#ffffff" stroke="#ddd6fe" stroke-width="1" rx="9"/>
+  <text x="111" y="646.5" font-size="9" font-weight="500" fill="#7c3aed" text-anchor="middle">Next.js</text>
+
+  <text x="200" y="675" font-size="10" fill="#9ca3af" text-anchor="middle">企业级简历模板</text>
+</svg>
