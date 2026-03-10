@@ -20,12 +20,11 @@ interface ResumeEditorProps {
 }
 
 export function ResumeEditor({ templateId, onExportPDF }: ResumeEditorProps) {
-  const { data, saveResume, isDirty, isEditing, setEditing } = useResumeEditor()
+  const { data, saveResume, isDirty, isEditing, setEditing, isExporting } = useResumeEditor()
   const { saveNow, lastSaved } = useAutoSave(data, templateId, {
     enabled: true,
     interval: 30000
   })
-  const [isExporting, setIsExporting] = useState(false)
 
   const handleManualSave = async () => {
     try {
@@ -38,11 +37,10 @@ export function ResumeEditor({ templateId, onExportPDF }: ResumeEditorProps) {
 
   const handleExportPDF = async () => {
     if (onExportPDF) {
-      setIsExporting(true)
       try {
         await onExportPDF()
-      } finally {
-        setIsExporting(false)
+      } catch (error) {
+        console.error('Export failed:', error)
       }
     }
   }

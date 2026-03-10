@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { ArrowLeft, Download, Star, Calendar, Heart, Share2, Edit, Eye } from 'lucide-react'
 import Link from 'next/link'
-import { ResumeEditorProvider } from '@/contexts/resume-editor-context'
+import { ResumeEditorProvider, useResumeEditor } from '@/contexts/resume-editor-context'
 import { ResumeEditor } from '@/components/editor/resume-editor'
 import { ResumeData } from '@/types/resume'
 import { sampleAnthropicResume } from '@/components/templates/anthropic'
@@ -20,22 +20,50 @@ interface TemplateDetailContentProps {
   }
 }
 
-export function TemplateDetailContent({ template }: TemplateDetailContentProps) {
+// 内部组件 - 可以访问context
+function TemplateDetailInner({ template }: TemplateDetailContentProps) {
   const [isEditMode, setIsEditMode] = useState(false)
-  const [resumeData, setResumeData] = useState<ResumeData>(sampleAnthropicResume)
+  const { exportToPDF, exportToPDFServer, isExporting } = useResumeEditor()
+  const previewRef = useRef<HTMLDivElement>(null)
 
+  // 导出PDF - 带降级逻辑
   const handleExportPDF = useCallback(async () => {
-    // TODO: Implement PDF export using html2canvas + jsPDF
-    console.log('Exporting to PDF...')
-  }, [])
+    try {
+      // 优先尝试服务器端导出（高质量）
+      await exportToPDFServer()
+    } catch (serverError) {
+      console.warn('服务器端导出失败，降级到客户端导出:', serverError)
 
-  const handleDownload = useCallback(() => {
-    // For now, just show an alert
-    alert('下载功能即将推出！')
-  }, [])
+      // 降级到客户端导出
+      try {
+        await exportToPDF(previewRef.current)
+      } catch (clientError) {
+        console.error('客户端导出也失败:', clientError)
+        alert('导出PDF失败，请重试')
+      }
+    }
+  }, [exportToPDF, exportToPDFServer])
+
+  // 下载按钮 - 同样的降级逻辑
+  const handleDownload = useCallback(async () => {
+    try {
+      // 优先尝试服务器端导出（高质量）
+      await exportToPDFServer()
+    } catch (serverError) {
+      console.warn('服务器端导出失败，降级到客户端导出:', serverError)
+
+      // 降级到客户端导出
+      try {
+        await exportToPDF(previewRef.current)
+      } catch (clientError) {
+        console.error('客户端导出也失败:', clientError)
+        alert('导出PDF失败，请重试')
+      }
+    }
+  }, [exportToPDF, exportToPDFServer])
 
   return (
-    <ResumeEditorProvider initialResumeData={resumeData}>
+    <>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
@@ -59,9 +87,9 @@ export function TemplateDetailContent({ template }: TemplateDetailContentProps) 
                     />
                   </div>
                 ) : (
-                  <div className="max-h-[800px] overflow-y-auto">
+                  <div ref={previewRef} className="max-h-[800px] overflow-y-auto p-8">
                     {template.id === 'anthropic-style' ? (
-                      <AnthropicTemplate data={resumeData} />
+                      <AnthropicTemplate data={sampleAnthropicResume} />
                     ) : (
                       <div className="h-96 bg-gray-100 flex items-center justify-center">
                         <div className="text-center p-8">
@@ -148,10 +176,11 @@ export function TemplateDetailContent({ template }: TemplateDetailContentProps) 
                   {!isEditMode && (
                     <button
                       onClick={handleDownload}
-                      className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                      disabled={isExporting}
+                      className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      下载模板
+                      {isExporting ? '正在导出...' : '下载PDF'}
                     </button>
                   )}
 
@@ -178,6 +207,15 @@ export function TemplateDetailContent({ template }: TemplateDetailContentProps) 
           </div>
         </div>
       </div>
+    </>
+  )
+}
+
+// 主组件 - 提供Context
+export function TemplateDetailContent({ template }: TemplateDetailContentProps) {
+  return (
+    <ResumeEditorProvider initialResumeData={sampleAnthropicResume}>
+      <TemplateDetailInner template={template} />
     </ResumeEditorProvider>
   )
 }

@@ -3,6 +3,8 @@
 import { createContext, useContext, useCallback, useReducer, ReactNode, useEffect } from 'react'
 import { ResumeData } from '@/types/resume'
 import { sampleAnthropicResume } from '@/components/templates/anthropic'
+import { exportElementToPDF } from '@/lib/pdf-export'
+import { exportResumeToPDF } from '@/app/actions/export-pdf'
 
 // 编辑器状态接口
 interface EditorState {
@@ -11,6 +13,7 @@ interface EditorState {
   isDirty: boolean
   lastSaved: Date | null
   selectedSection: string | null
+  isExporting: boolean
 }
 
 // Action类型
@@ -21,6 +24,7 @@ export type EditorAction =
   | { type: 'SET_DIRTY'; payload: boolean }
   | { type: 'SET_SAVED'; payload: Date }
   | { type: 'SELECT_SECTION'; payload: string | null }
+  | { type: 'SET_EXPORTING'; payload: boolean }
 
 // Context值接口
 interface ResumeEditorContextType extends EditorState {
@@ -60,7 +64,8 @@ interface ResumeEditorContextType extends EditorState {
 
   // 保存与导出
   saveResume: () => Promise<string>
-  exportToPDF: () => Promise<void>
+  exportToPDF: (previewElement: HTMLElement | null) => Promise<void>
+  exportToPDFServer: () => Promise<void>
   resetChanges: () => void
 }
 
@@ -85,6 +90,9 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     case 'SELECT_SECTION':
       return { ...state, selectedSection: action.payload }
 
+    case 'SET_EXPORTING':
+      return { ...state, isExporting: action.payload }
+
     default:
       return state
   }
@@ -96,7 +104,8 @@ const initialState: EditorState = {
   isEditing: false,
   isDirty: false,
   lastSaved: null,
-  selectedSection: null
+  selectedSection: null,
+  isExporting: false
 }
 
 // Context创建
@@ -370,17 +379,71 @@ export function ResumeEditorProvider({
     })
   }, [])
 
-  // 保存与导出（占位符，将在后续实现）
+  // 保存与导出
   const saveResume = useCallback(async (): Promise<string> => {
     // TODO: 实现保存到SQLite
     dispatch({ type: 'SET_SAVED', payload: new Date() })
     return Promise.resolve(Date.now().toString())
   }, [])
 
-  const exportToPDF = useCallback(async (): Promise<void> => {
-    // TODO: 实现PDF导出
-    return Promise.resolve()
-  }, [])
+  const exportToPDF = useCallback(async (previewElement: HTMLElement | null): Promise<void> => {
+    if (!previewElement) {
+      console.error('Preview element not found')
+      throw new Error('预览区域未找到，无法导出PDF')
+    }
+
+    dispatch({ type: 'SET_EXPORTING', payload: true })
+
+    try {
+      // 生成文件名：姓名_简历_日期.pdf
+      const filename = `${state.data.header.name || '简历'}_简历_${new Date().toISOString().split('T')[0]}.pdf`
+
+      await exportElementToPDF(previewElement, {
+        filename,
+        margin: 10,
+        orientation: 'portrait'
+      })
+
+      console.log('PDF exported successfully (client-side)')
+    } catch (error) {
+      console.error('Failed to export PDF:', error)
+      throw error
+    } finally {
+      dispatch({ type: 'SET_EXPORTING', payload: false })
+    }
+  }, [state.data.header.name])
+
+  // 服务器端PDF导出（高质量）
+  const exportToPDFServer = useCallback(async (): Promise<void> => {
+    dispatch({ type: 'SET_EXPORTING', payload: true })
+
+    try {
+      console.log('Starting server-side PDF export...')
+
+      // 调用Server Action
+      const result = await exportResumeToPDF(state.data, 'anthropic-style')
+
+      if (!result.success || !result.pdfBase64) {
+        throw new Error(result.error || 'PDF生成失败')
+      }
+
+      // 下载PDF
+      const filename = `${state.data.header.name || '简历'}_简历_${new Date().toISOString().split('T')[0]}.pdf`
+      const link = document.createElement('a')
+      link.href = `data:application/pdf;base64,${result.pdfBase64}`
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      console.log('PDF exported successfully (server-side)')
+    } catch (error) {
+      console.error('Server-side PDF export failed:', error)
+      throw error
+    } finally {
+      dispatch({ type: 'SET_EXPORTING', payload: false })
+    }
+  }, [state.data])
 
   const resetChanges = useCallback(() => {
     dispatch({ type: 'SET_DATA', payload: initialResumeData || sampleAnthropicResume })
@@ -411,6 +474,7 @@ export function ResumeEditorProvider({
     deleteCertification,
     saveResume,
     exportToPDF,
+    exportToPDFServer,
     resetChanges
   }
 
