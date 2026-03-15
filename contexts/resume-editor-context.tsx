@@ -4,7 +4,6 @@ import { createContext, useContext, useCallback, useReducer, ReactNode, useEffec
 import { ResumeData } from '@/types/resume'
 import { sampleAnthropicResume } from '@/components/templates/anthropic'
 import { exportElementToPDF } from '@/lib/pdf-export'
-import { exportResumeToPDF } from '@/app/actions/export-pdf'
 
 // 编辑器状态接口
 interface EditorState {
@@ -413,15 +412,26 @@ export function ResumeEditorProvider({
     }
   }, [state.data.header.name])
 
-  // 服务器端PDF导出（高质量）
+  // 服务器端PDF导出（高质量）- 通过API Route
   const exportToPDFServer = useCallback(async (): Promise<void> => {
     dispatch({ type: 'SET_EXPORTING', payload: true })
 
     try {
-      console.log('Starting server-side PDF export...')
+      console.log('Starting server-side PDF export via API...')
 
-      // 调用Server Action
-      const result = await exportResumeToPDF(state.data, 'anthropic-style')
+      // 调用API Route
+      const response = await fetch('/api/export-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resumeData: state.data,
+          templateId: 'anthropic-style',
+        }),
+      })
+
+      const result = await response.json()
 
       if (!result.success || !result.pdfBase64) {
         throw new Error(result.error || 'PDF生成失败')
@@ -436,7 +446,7 @@ export function ResumeEditorProvider({
       link.click()
       document.body.removeChild(link)
 
-      console.log('PDF exported successfully (server-side)')
+      console.log('PDF exported successfully (server-side via API)')
     } catch (error) {
       console.error('Server-side PDF export failed:', error)
       throw error
