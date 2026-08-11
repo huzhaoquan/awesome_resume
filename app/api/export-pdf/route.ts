@@ -7,7 +7,6 @@ import { generateResumeHTML } from '@/lib/resume-html-generator'
 import { existsSync, copyFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { execSync } from 'node:child_process'
 
 // A4 尺寸常量（位图分页方案用）
 // 96dpi 下：210mm×297mm → 794×1123 CSS 像素；pt 下 → 595.28×841.89
@@ -30,19 +29,22 @@ interface ExportPDFRequest {
 }
 
 /**
- * @sparticuz/chromium 不携带任何 CJK 字形，且它把 fonts.tar.br 解压到 /tmp/fonts，
- * 并通过 FONTCONFIG_PATH=/tmp/fonts 让 Chromium 用自带的 fonts.conf（<dir>/tmp/fonts</dir>）。
+ * @sparticuz/chromium 不携带任何 CJK 字形。它把 fonts.tar.br 解压到 /tmp/fonts（lambdafs
+ * 取 basename 去后缀 → 'fonts'），并通过自带 fonts.conf 的 <dir>/tmp/fonts</dir> 扫描该目录。
  *
  * 关键结论：Chromium 的 page.pdf() 嵌入器对「base64 data URI 的 web 字体」不可靠
  * （屏幕渲染正常，但 PDF 里字体被丢弃 → 中文回退到 DejaVuSans → 豆腐块）。
- * 唯一可靠的办法是把 CJK 字体作为「真正的系统字体」装进这个 fontconfig 目录，
- * 然后 CSS 字体栈直接写 'Noto Sans SC'，系统字体会被 PDF 嵌入器 100% 嵌入。
+ * 唯一可靠的办法是把 CJK 字体作为「真正的系统字体」放进 Chromium 扫描的 fontconfig 目录。
  *
- * 本函数：把随项目打包的 NotoSansSC-Regular.otf 复制到 /tmp/fonts/fonts/，
- * 再重建 fontconfig 缓存。模块级 flag 保证每个进程只装一次。
+ * 而且这一步**不需要 fc-cache**：Chromium 自带的 fontconfig 启动时会自行扫描 <dir> 列出的目录，
+ * 只要 NotoSansSC-Regular.otf 与 Latin 字体并列躺在 /tmp/fonts/ 根目录，就能被发现。
+ * （Vercel Lambda 没有 fontconfig/fc-cache，调 fc-cache 必然 status 127。）
+ *
+ * 本函数：把随项目打包的 NotoSansSC-Regular.otf 复制到 /tmp/fonts/ 根。
+ * 模块级 flag 保证每个进程只装一次。
  */
-const FONTCONFIG_DIR = join(tmpdir(), 'fonts') // /tmp/fonts（Chromium 读取的 fonts.conf 所在目录）
-const FONT_INSTALL_DIR = join(FONTCONFIG_DIR, 'fonts') // /tmp/fonts/fonts（实际字体文件目录）
+const FONTCONFIG_DIR = join(tmpdir(), 'fonts') // /tmp/fonts（Chromium fonts.conf 所在目录 + fonts.tar 解压目标）
+const FONT_INSTALL_DIR = FONTCONFIG_DIR // /tmp/fonts 根：CJK OTF 与 Latin 字体并列放这里
 const BUNDLED_FONT = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
 let cjkFontInstalled = false
 
@@ -53,6 +55,8 @@ function ensureCjkSystemFont(): void {
       console.warn('[PDF API] Bundled NotoSansSC-Regular.otf not found at', BUNDLED_FONT)
       return
     }
+    // 首次冷启动时 /tmp/fonts 可能还没被 chromium 解压出来，先建目录；
+    // 之后 executablePath() 解压 fonts.tar.br 到同一目录，CJK OTF 与 Latin 并存。
     if (!existsSync(FONT_INSTALL_DIR)) {
       mkdirSync(FONT_INSTALL_DIR, { recursive: true })
     }
@@ -60,27 +64,11 @@ function ensureCjkSystemFont(): void {
     if (!existsSync(target)) {
       copyFileSync(BUNDLED_FONT, target)
     }
-    // 重建 fontconfig 缓存，让 Chromium 发现新装的字体。
-    // 必须用与 Chromium 一致的 FONTCONFIG_PATH（/tmp/fonts）。
-    execSync('fc-cache -f', {
-      env: { ...process.env, FONTCONFIG_PATH: FONTCONFIG_DIR },
-      stdio: 'ignore',
-      timeout: 15000,
-    })
-
-    // 兜底：把字体也装进用户字体目录（~/.fonts），并对系统默认 fontconfig 重建缓存。
-    // 万一某些 Chromium 构建忽略 FONTCONFIG_PATH，至少能从系统默认扫描的用户字体目录找到 CJK。
-    const homeFonts = join(process.env.HOME ?? tmpdir(), '.fonts')
-    if (!existsSync(homeFonts)) mkdirSync(homeFonts, { recursive: true })
-    const homeTarget = join(homeFonts, 'NotoSansSC-Regular.otf')
-    if (!existsSync(homeTarget)) copyFileSync(BUNDLED_FONT, homeTarget)
-    execSync('fc-cache -f', { stdio: 'ignore', timeout: 15000 })
-
     cjkFontInstalled = true
-    console.log('[PDF API] CJK system font installed into fontconfig:', target)
+    console.log('[PDF API] CJK font placed at', target)
   } catch (e) {
-    // fc-cache 缺失或复制失败都不致命：降级为无 CJK 系统字体（PDF 中文可能方格）
-    console.warn('[PDF API] Failed to install CJK system font:', e)
+    // 复制失败不致命：降级为无 CJK 系统字体（PDF 中文可能方格，auto 模式会回退位图）
+    console.warn('[PDF API] Failed to place CJK font:', e)
   }
 }
 
