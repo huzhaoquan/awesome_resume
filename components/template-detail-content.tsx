@@ -7,7 +7,8 @@ import { ResumeEditorProvider, useResumeEditor } from '@/contexts/resume-editor-
 import { ResumeEditor } from '@/components/editor/resume-editor'
 import { ResumeData } from '@/types/resume'
 import { sampleAnthropicResume } from '@/components/templates/anthropic'
-import { AnthropicTemplate } from '@/components/templates/anthropic'
+import { ResumeRenderer } from '@/components/resume/resume-renderer'
+import { getThemeIdForTemplate } from '@/lib/resume-themes'
 
 interface TemplateDetailContentProps {
   template: {
@@ -23,14 +24,16 @@ interface TemplateDetailContentProps {
 // 内部组件 - 可以访问context
 function TemplateDetailInner({ template }: TemplateDetailContentProps) {
   const [isEditMode, setIsEditMode] = useState(false)
-  const { exportToPDF, exportToPDFServer, isExporting } = useResumeEditor()
+  const { exportToPDF, exportToPDFServer, isExporting, data } = useResumeEditor()
   const previewRef = useRef<HTMLDivElement>(null)
+
+  const resumeThemeId = getThemeIdForTemplate(template.id)
 
   // 导出PDF - 带降级逻辑
   const handleExportPDF = useCallback(async () => {
     try {
       // 优先尝试服务器端导出（高质量）
-      await exportToPDFServer()
+      await exportToPDFServer(resumeThemeId)
     } catch (serverError) {
       console.warn('服务器端导出失败，降级到客户端导出:', serverError)
 
@@ -42,13 +45,13 @@ function TemplateDetailInner({ template }: TemplateDetailContentProps) {
         alert('导出PDF失败，请重试')
       }
     }
-  }, [exportToPDF, exportToPDFServer])
+  }, [exportToPDF, exportToPDFServer, resumeThemeId])
 
   // 下载按钮 - 同样的降级逻辑
   const handleDownload = useCallback(async () => {
     try {
       // 优先尝试服务器端导出（高质量）
-      await exportToPDFServer()
+      await exportToPDFServer(resumeThemeId)
     } catch (serverError) {
       console.warn('服务器端导出失败，降级到客户端导出:', serverError)
 
@@ -60,11 +63,11 @@ function TemplateDetailInner({ template }: TemplateDetailContentProps) {
         alert('导出PDF失败，请重试')
       }
     }
-  }, [exportToPDF, exportToPDFServer])
+  }, [exportToPDF, exportToPDFServer, resumeThemeId])
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-anthropic-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
             <Link
@@ -78,7 +81,7 @@ function TemplateDetailInner({ template }: TemplateDetailContentProps) {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-luxury border border-anthropic-200 overflow-hidden">
                 {isEditMode ? (
                   <div className="h-full">
                     <ResumeEditor
@@ -87,30 +90,17 @@ function TemplateDetailInner({ template }: TemplateDetailContentProps) {
                     />
                   </div>
                 ) : (
-                  <div ref={previewRef} className="max-h-[800px] overflow-y-auto p-8">
-                    {template.id === 'anthropic-style' ? (
-                      <AnthropicTemplate data={sampleAnthropicResume} />
-                    ) : (
-                      <div className="h-96 bg-gray-100 flex items-center justify-center">
-                        <div className="text-center p-8">
-                          <div className="bg-gradient-to-br from-anthropic-100 to-anthropic-200 rounded-xl p-12 mb-4">
-                            <div className="text-6xl mb-4">📝</div>
-                            <div className="text-2xl font-bold text-anthropic-700">
-                              {template.name}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                  <div ref={previewRef} className="max-h-[800px] overflow-y-auto p-4 sm:p-8">
+                    <ResumeRenderer themeId={resumeThemeId} data={data} />
                   </div>
                 )}
               </div>
             </div>
 
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sticky top-24">
+              <div className="bg-white rounded-xl shadow-luxury border border-anthropic-200 p-8 sticky top-24">
                 <div className="mb-6">
-                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h1 className="text-2xl font-bold text-anthropic-900 mb-2 font-serif">
                     {template.name}
                   </h1>
                   <p className="text-gray-600">{template.targetRole}</p>

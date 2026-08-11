@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles, Users, Zap } from 'lucide-react'
 
 export default function Hero() {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+    <div className="relative overflow-hidden bg-anthropic-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left">
@@ -14,7 +14,7 @@ export default function Hero() {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold text-anthropic-900 mb-6 font-serif">
               用
               <span className="gradient-text block lg:inline ml-2">
                 专业
@@ -64,7 +64,7 @@ export default function Hero() {
 
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-anthropic-400 to-anthropic-600 rounded-2xl transform rotate-3 scale-105 opacity-10"></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+            <div className="relative bg-white rounded-2xl shadow-luxury-lg p-8 border border-anthropic-200">
               <div className="absolute top-4 right-4">
                 <Zap className="w-8 h-8 text-anthropic-500 opacity-60" />
               </div>

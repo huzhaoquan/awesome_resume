@@ -2,28 +2,152 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================================
+   网站外壳语义 token（elegant-luxury 主题）
+   供 shadcn/ui 组件（components/ui/*）的 bg-primary / bg-background 等使用。
+   简历本体不用这些 token，它有独立的 --resume-* 体系（见下方）。
+   ========================================================================= */
 :root {
-  --anthropic-50: 248, 248, 255;
-  --anthropic-100: 224, 224, 254;
-  --anthropic-200: 199, 199, 254;
-  --anthropic-300: 164, 164, 253;
-  --anthropic-400: 130, 130, 250;
-  --anthropic-500: 107, 105, 250;
-  --anthropic-600: 94, 93, 255;
-  --anthropic-700: 75, 73, 218;
-  --anthropic-800: 62, 60, 184;
-  --anthropic-900: 53, 53, 149;
-  --anthropic-950: 29, 27, 85;
+  --background: oklch(0.9779 0.0042 56.3756);
+  --foreground: oklch(0.2178 0 0);
+  --card: oklch(1.0000 0 0);
+  --card-foreground: oklch(0.2178 0 0);
+  --popover: oklch(1.0000 0 0);
+  --popover-foreground: oklch(0.2178 0 0);
+  --primary: oklch(0.4650 0.1470 24.9381);
+  --primary-foreground: oklch(1.0000 0 0);
+  --secondary: oklch(0.9625 0.0385 89.0943);
+  --secondary-foreground: oklch(0.4847 0.1022 75.1153);
+  --muted: oklch(0.9431 0.0068 53.4442);
+  --muted-foreground: oklch(0.4444 0.0096 73.6390);
+  --accent: oklch(0.9619 0.0580 95.6174);
+  --accent-foreground: oklch(0.3958 0.1331 25.7230);
+  --destructive: oklch(0.4437 0.1613 26.8994);
+  --destructive-foreground: oklch(1.0000 0 0);
+  --border: oklch(0.9355 0.0324 80.9937);
+  --input: oklch(0.9355 0.0324 80.9937);
+  --ring: oklch(0.4650 0.1470 24.9381);
+  --radius: 0.375rem;
 }
 
-body {
-  @apply bg-white text-gray-900;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    @apply bg-anthropic-50 text-anthropic-900 font-sans antialiased;
+  }
 }
 
 .gradient-text {
-  @apply bg-gradient-to-r from-anthropic-600 to-anthropic-700 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-anthropic-600 to-anthropic-500 bg-clip-text text-transparent;
 }
 
+/* 主按钮：名字保留 purple-button 以兼容现有引用，实为酒红 elegant-luxury 主按钮 */
 .purple-button {
-  @apply bg-anthropic-600 hover:bg-anthropic-700 text-white font-medium rounded-lg px-6 py-3 transition-colors duration-200;
+  @apply bg-anthropic-600 hover:bg-anthropic-700 text-white font-medium rounded-lg px-6 py-3 transition-all duration-200 shadow-luxury hover:shadow-luxury-lg;
+}
+
+/* =========================================================================
+   简历主题 token 体系（参考 tweakcn / shadcn 规范）
+   网站外壳继续用上面的 anthropic-* 色板；简历本体渲染只用 --resume-* token。
+   默认值（无 data-resume-theme 时）回退到 mono 主题。
+   ========================================================================= */
+:root {
+  --resume-background: oklch(1 0 0);
+  --resume-foreground: oklch(0.1448 0 0);
+  --resume-card: oklch(1 0 0);
+  --resume-card-foreground: oklch(0.1448 0 0);
+  --resume-primary: oklch(0.1448 0 0);
+  --resume-primary-foreground: oklch(0.9851 0 0);
+  --resume-secondary: oklch(0.9702 0 0);
+  --resume-secondary-foreground: oklch(0.2046 0 0);
+  --resume-muted: oklch(0.9702 0 0);
+  --resume-muted-foreground: oklch(0.5486 0 0);
+  --resume-accent: oklch(0.9702 0 0);
+  --resume-accent-foreground: oklch(0.2046 0 0);
+  --resume-border: oklch(0.9219 0 0);
+  --resume-radius: 0rem;
+  --font-display: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* mono 主题：与 :root 默认值一致，显式声明以便切换器对照 */
+[data-resume-theme='mono'] {
+  --resume-background: oklch(1.0000 0 0);
+  --resume-foreground: oklch(0.1448 0 0);
+  --resume-card: oklch(1.0000 0 0);
+  --resume-card-foreground: oklch(0.1448 0 0);
+  --resume-primary: oklch(0.1448 0 0);
+  --resume-primary-foreground: oklch(0.9851 0 0);
+  --resume-secondary: oklch(0.9702 0 0);
+  --resume-secondary-foreground: oklch(0.2046 0 0);
+  --resume-muted: oklch(0.9702 0 0);
+  --resume-muted-foreground: oklch(0.5486 0 0);
+  --resume-accent: oklch(0.9702 0 0);
+  --resume-accent-foreground: oklch(0.2046 0 0);
+  --resume-border: oklch(0.9219 0 0);
+  --resume-radius: 0rem;
+  --font-display: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* amber-minimal 主题：纯白 + 琥珀，小圆角，Inter */
+[data-resume-theme='amber-minimal'] {
+  --resume-background: oklch(1.0000 0 0);
+  --resume-foreground: oklch(0.2686 0 0);
+  --resume-card: oklch(1.0000 0 0);
+  --resume-card-foreground: oklch(0.2686 0 0);
+  --resume-primary: oklch(0.7686 0.1647 70.0804);
+  --resume-primary-foreground: oklch(0 0 0);
+  --resume-secondary: oklch(0.9670 0.0029 264.5419);
+  --resume-secondary-foreground: oklch(0.4461 0.0263 256.8018);
+  --resume-muted: oklch(0.9846 0.0017 247.8389);
+  --resume-muted-foreground: oklch(0.5510 0.0234 264.3637);
+  --resume-accent: oklch(0.9869 0.0214 95.2774);
+  --resume-accent-foreground: oklch(0.4732 0.1247 46.2007);
+  --resume-border: oklch(0.9276 0.0058 264.5313);
+  --resume-radius: 0.375rem;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* claude 主题：暖米黄 + 陶土橙，中圆角，Inter */
+[data-resume-theme='claude'] {
+  --resume-background: oklch(0.9818 0.0054 95.0986);
+  --resume-foreground: oklch(0.3438 0.0269 95.7226);
+  --resume-card: oklch(0.9818 0.0054 95.0986);
+  --resume-card-foreground: oklch(0.1908 0.0020 106.5859);
+  --resume-primary: oklch(0.6171 0.1375 39.0427);
+  --resume-primary-foreground: oklch(1.0000 0 0);
+  --resume-secondary: oklch(0.9245 0.0138 92.9892);
+  --resume-secondary-foreground: oklch(0.4334 0.0177 98.6048);
+  --resume-muted: oklch(0.9341 0.0153 90.2390);
+  --resume-muted-foreground: oklch(0.6059 0.0075 97.4233);
+  --resume-accent: oklch(0.9245 0.0138 92.9892);
+  --resume-accent-foreground: oklch(0.2671 0.0196 98.9390);
+  --resume-border: oklch(0.8847 0.0069 97.3627);
+  --resume-radius: 0.5rem;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* elegant-luxury 主题：暖米 + 酒红，小圆角，Inter */
+[data-resume-theme='elegant-luxury'] {
+  --resume-background: oklch(0.9779 0.0042 56.3756);
+  --resume-foreground: oklch(0.2178 0 0);
+  --resume-card: oklch(0.9779 0.0042 56.3756);
+  --resume-card-foreground: oklch(0.2178 0 0);
+  --resume-primary: oklch(0.4650 0.1470 24.9381);
+  --resume-primary-foreground: oklch(1.0000 0 0);
+  --resume-secondary: oklch(0.9625 0.0385 89.0943);
+  --resume-secondary-foreground: oklch(0.4847 0.1022 75.1153);
+  --resume-muted: oklch(0.9431 0.0068 53.4442);
+  --resume-muted-foreground: oklch(0.4444 0.0096 73.6390);
+  --resume-accent: oklch(0.9619 0.0580 95.6174);
+  --resume-accent-foreground: oklch(0.3958 0.1331 25.7230);
+  --resume-border: oklch(0.9355 0.0324 80.9937);
+  --resume-radius: 0.375rem;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }

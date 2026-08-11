@@ -3,7 +3,7 @@
 import chromium from '@sparticuz/chromium'
 import puppeteer from 'puppeteer-core'
 import { ResumeData } from '@/types/resume'
-import { generateAnthropicResumeHTML } from '@/lib/resume-html-generator'
+import { generateResumeHTML } from '@/lib/resume-html-generator'
 
 interface ExportPDFResult {
   success: boolean
@@ -92,14 +92,8 @@ export async function exportResumeToPDF(
 
     const page = await browser.newPage()
 
-    // 2. 生成HTML内容
-    let htmlContent: string
-    if (templateId === 'anthropic-style') {
-      htmlContent = generateAnthropicResumeHTML(resumeData)
-    } else {
-      // 默认使用Anthropic模板
-      htmlContent = generateAnthropicResumeHTML(resumeData)
-    }
+    // 2. 生成HTML内容（按主题渲染，内部按 templateId 路由 + 兜底 mono）
+    const htmlContent = generateResumeHTML(resumeData, templateId)
 
     // 3. 设置HTML内容
     await page.setContent(htmlContent, {

@@ -2,6 +2,78 @@ import { ResumeTemplate, TemplateCategory } from '@/types/resume'
 
 export const templates: ResumeTemplate[] = [
   {
+    id: 'mono',
+    name: '极简单色 Mono',
+    description: '纯黑白灰 + 等宽字体，干净硬核的工程师气质。',
+    category: 'software',
+    techStack: ['全栈开发', '系统设计', '基础设施'],
+    previewImage: '/templates/mono.svg',
+    features: [
+      'JetBrains Mono 等宽排版',
+      '零圆角极简分隔线',
+      '技术栈标签清晰可读',
+      '段落式成就清单',
+      '服务端高质量 PDF 导出',
+      '所见即所得（预览即导出）'
+    ],
+    targetRole: '软件工程师 / 基础设施 / 全栈开发',
+    downloadLink: '#'
+  },
+  {
+    id: 'amber-minimal',
+    name: '琥珀极简 Amber Minimal',
+    description: '白底 + 琥珀主色，干净温暖，适用面广。',
+    category: 'software',
+    techStack: ['全栈开发', '系统设计', '产品经理'],
+    previewImage: '/templates/amber-minimal.svg',
+    features: [
+      '琥珀强调色点缀',
+      '中性灰分层清晰',
+      '小圆角柔和排版',
+      '技能标签可视化',
+      '服务端高质量 PDF 导出',
+      '所见即所得（预览即导出）'
+    ],
+    targetRole: '软件工程师 / 产品经理 / 全栈开发',
+    downloadLink: '#'
+  },
+  {
+    id: 'claude',
+    name: 'Claude 陶土 Claude',
+    description: '暖米底 + 陶土橙，亲和温润，适合产品/沟通岗。',
+    category: 'fullstack',
+    techStack: ['产品规划', '全栈开发', '数据分析'],
+    previewImage: '/templates/claude.svg',
+    features: [
+      '陶土橙温暖强调',
+      '米黄底护眼耐读',
+      '中圆角圆润观感',
+      '模块化卡片布局',
+      '服务端高质量 PDF 导出',
+      '所见即所得（预览即导出）'
+    ],
+    targetRole: '产品经理 / 全栈工程师 / 运营',
+    downloadLink: '#'
+  },
+  {
+    id: 'elegant-luxury',
+    name: '奢华酒红 Elegant Luxury',
+    description: '暖米底 + 酒红 + 金色，沉稳奢华，适合管理岗。',
+    category: 'product',
+    techStack: ['团队管理', '商业分析', '战略规划'],
+    previewImage: '/templates/elegant-luxury.svg',
+    features: [
+      '酒红主色沉稳大气',
+      '金色辅助精致点缀',
+      '暖米底高级质感',
+      '经典商务版式',
+      '服务端高质量 PDF 导出',
+      '所见即所得（预览即导出）'
+    ],
+    targetRole: '管理岗 / 商务 / 高级专家',
+    downloadLink: '#'
+  },
+  {
     id: 'anthropic-style',
     name: 'Anthropic 现代风格',
     description: 'Anthropic官方品牌风格，简约优雅，适合技术岗位申请',
@@ -128,3 +200,23 @@ export const getTemplatesByCategory = (category: string): ResumeTemplate[] => {
   if (category === 'all') return templates
   return templates.filter(t => t.category === category)
 }
+
+/**
+ * 拥有真实渲染主题、可在首页展示真实缩略图的模板 id。
+ * 其余模板（anthropic-style 及职位占位模板）保留在 templates 里供详情页深链接，
+ * 但不在首页卡片网格中展示。
+ */
+const RENDERABLE_TEMPLATE_IDS = ['mono', 'amber-minimal', 'claude', 'elegant-luxury']
+
+/** 首页卡片网格使用的模板子集 */
+export const homepageTemplates: ResumeTemplate[] = templates.filter(t =>
+  RENDERABLE_TEMPLATE_IDS.includes(t.id)
+)
+
+/** 首页分类筛选按钮，仅保留 homepageTemplates 覆盖到的分类 */
+export const homepageCategories: TemplateCategory[] = [
+  { id: 'all', name: '全部模板', description: '查看所有简历模板' },
+  { id: 'software', name: '软件工程', description: '软件开发相关职位' },
+  { id: 'fullstack', name: '全栈开发', description: '全栈工程师职位' },
+  { id: 'product', name: '产品经理', description: '产品管理职位' },
+]

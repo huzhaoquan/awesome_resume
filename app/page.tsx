@@ -1,4 +1,4 @@
-import { templates, categories } from '@/lib/templates'
+import { homepageTemplates, homepageCategories } from '@/lib/templates'
 import Hero from '@/components/hero'
 import TemplateGrid from '@/components/template-grid'
 
@@ -15,8 +15,8 @@ export default async function Home({
       <Hero />
       <section id="templates">
         <TemplateGrid
-          templates={templates}
-          categories={categories}
+          templates={homepageTemplates}
+          categories={homepageCategories}
           selectedCategory={selectedCategory}
         />
       </section>

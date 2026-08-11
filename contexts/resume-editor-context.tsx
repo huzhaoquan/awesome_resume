@@ -64,7 +64,7 @@ interface ResumeEditorContextType extends EditorState {
   // 保存与导出
   saveResume: () => Promise<string>
   exportToPDF: (previewElement: HTMLElement | null) => Promise<void>
-  exportToPDFServer: () => Promise<void>
+  exportToPDFServer: (templateId?: string) => Promise<void>
   resetChanges: () => void
 }
 
@@ -413,7 +413,7 @@ export function ResumeEditorProvider({
   }, [state.data.header.name])
 
   // 服务器端PDF导出（高质量）- 通过API Route
-  const exportToPDFServer = useCallback(async (): Promise<void> => {
+  const exportToPDFServer = useCallback(async (templateId?: string): Promise<void> => {
     dispatch({ type: 'SET_EXPORTING', payload: true })
 
     try {
@@ -427,7 +427,7 @@ export function ResumeEditorProvider({
         },
         body: JSON.stringify({
           resumeData: state.data,
-          templateId: 'anthropic-style',
+          templateId: templateId ?? 'mono',
         }),
       })
 
